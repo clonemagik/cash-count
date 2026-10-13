@@ -22,6 +22,8 @@
       --white: #ffffff;
       --shadow: 0 4px 12px rgba(0, 20, 30, 0.04), 0 2px 4px rgba(0, 0, 0, 0.02);
       --radius: 18px;
+      --green: #1a7a4c;
+      --green-soft: #e6f5ed;
     }
 
     html {
@@ -43,7 +45,7 @@
     .app-header {
       background: linear-gradient(135deg, #17324d 0%, #1e405e 100%);
       color: white;
-      padding: 18px 16px 16px;
+      padding: 18px 16px 14px;
       border-bottom: 3px solid var(--orange);
       position: sticky;
       top: 0;
@@ -69,7 +71,7 @@
     }
 
     .app-header p {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       opacity: 0.85;
       font-weight: 400;
     }
@@ -81,12 +83,63 @@
       padding: 0 12px;
     }
 
-    /* compact reference strip - kept minimal */
+    /* mode toggle */
+    .mode-toggle {
+      display: flex;
+      background: var(--white);
+      border-radius: 50px;
+      padding: 4px;
+      margin: 14px 0 12px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 11px 8px;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #6a829b;
+      cursor: pointer;
+      border-radius: 50px;
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mode-btn.active {
+      color: white;
+    }
+
+    .mode-slider {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: calc(50% - 4px);
+      height: calc(100% - 8px);
+      background: var(--navy);
+      border-radius: 50px;
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 0;
+      box-shadow: 0 2px 8px rgba(20, 43, 68, 0.3);
+    }
+
+    .mode-slider.reverse {
+      transform: translateX(100%);
+    }
+
+    /* compact reference strip */
     .ref-strip {
       background: var(--white);
       border-radius: 50px;
       padding: 8px 14px;
-      margin: 14px 0 12px;
+      margin: 0 0 12px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -113,6 +166,21 @@
       border-radius: 40px;
       font-weight: 700;
       font-size: 0.65rem;
+    }
+
+    /* ---- view panels ---- */
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* ---- denomination cards ---- */
@@ -224,6 +292,149 @@
       border-color: var(--orange);
       box-shadow: 0 0 0 3px rgba(245, 130, 32, 0.2);
       background: #fffcf9;
+    }
+
+    /* ---- REVERSE MODE per-denomination ---- */
+    .reverse-denom-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      padding: 12px 12px 10px;
+      margin-bottom: 10px;
+      transition: 0.15s;
+    }
+
+    .reverse-denom-card.has-value {
+      border-color: #ffd0a4;
+      background: linear-gradient(to bottom, #fffdfb, #ffffff);
+    }
+
+    .reverse-denom-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .reverse-denom-label {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .reverse-denom-label small {
+      font-weight: 500;
+      font-size: 0.65rem;
+      color: #6a829b;
+    }
+
+    .reverse-amount-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #f9fcff;
+      border: 1.5px solid #d0ddee;
+      border-radius: 12px;
+      padding: 2px 10px;
+      transition: 0.15s;
+      flex: 1;
+      max-width: 160px;
+    }
+
+    .reverse-amount-input-wrap:focus-within {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(245, 130, 32, 0.12);
+      background: #fffcf9;
+    }
+
+    .reverse-amount-input-wrap .currency {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--orange-deep);
+    }
+
+    .reverse-amount-input-wrap input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy);
+      padding: 9px 0;
+      outline: none;
+      min-width: 0;
+      text-align: right;
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    .reverse-amount-input-wrap input::-webkit-outer-spin-button,
+    .reverse-amount-input-wrap input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .reverse-amount-input-wrap input::placeholder {
+      color: #b0c2d4;
+      font-weight: 600;
+    }
+
+    /* breakdown pills inside reverse card */
+    .reverse-breakdown {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding-top: 10px;
+      border-top: 1px dashed #e4edf8;
+      margin-top: 10px;
+      min-height: 0;
+    }
+
+    .reverse-breakdown.hidden {
+      display: none;
+    }
+
+    .bd-pill {
+      background: #f0f6ff;
+      border-radius: 40px;
+      padding: 4px 10px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .bd-pill .num {
+      color: var(--orange-deep);
+      font-size: 0.85rem;
+    }
+
+    .bd-pill .unit {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      color: #6a829b;
+      font-weight: 600;
+    }
+
+    .bd-pill.zero {
+      opacity: 0.35;
+    }
+
+    .bd-note {
+      font-size: 0.7rem;
+      color: #6a829b;
+      font-style: italic;
+      padding: 4px 0;
     }
 
     /* running total card */
@@ -381,7 +592,8 @@
 
     /* ensure inputs don't zoom on ios */
     @supports (-webkit-touch-callout: none) {
-      .unit-item input {
+      .unit-item input,
+      .reverse-amount-input-wrap input {
         font-size: 16px;
       }
     }
@@ -404,59 +616,119 @@
     <h1>
       <span>₦</span> Cash Count
     </h1>
-    <p>Stack · Bundle · Pack</p>
+    <p id="headerSubtitle">Stack · Bundle · Pack</p>
   </div>
 </header>
 
 <div class="container">
-  <!-- ultra-minimal reference strip -->
-  <div class="ref-strip">
-    <span><strong>Pack</strong> 100</span>
-    <span><strong>Bundle</strong> 500</span>
-    <span><strong>Stack</strong> 10k</span>
+
+  <!-- mode toggle -->
+  <div class="mode-toggle" role="tablist">
+    <div class="mode-slider" id="modeSlider"></div>
+    <button class="mode-btn active" id="btnForward" role="tab" aria-selected="true">Count → Cash</button>
+    <button class="mode-btn" id="btnReverse" role="tab" aria-selected="false">Cash → Count</button>
   </div>
 
-  <!-- denomination cards -->
-  <div class="denom-list" id="denomList">
-    <!-- injected by JS -->
-  </div>
-
-  <!-- running total -->
-  <div class="total-highlight">
-    <div class="label">Running total</div>
-    <div class="grand-total" id="runningTotal">₦0.00</div>
-    <small id="runningNotesSummary">0 notes</small>
-  </div>
-
-  <!-- bottom summary + reset -->
-  <div class="bottom-actions">
-    <div class="bottom-row">
-      <div class="bottom-total-block">
-        <span class="title">Total cash</span>
-        <span class="sub">all denominations</span>
-      </div>
-      <div class="bottom-amount" id="bottomTotal">₦0.00</div>
+  <!-- ============ FORWARD VIEW ============ -->
+  <div class="view active" id="forwardView">
+    <div class="ref-strip">
+      <span><strong>Pack</strong> 100</span>
+      <span><strong>Bundle</strong> 500</span>
+      <span><strong>Stack</strong> 5k</span>
     </div>
-    <button class="reset-btn" id="resetButton" aria-label="Reset count">
-      <span>↻</span> Reset count
-    </button>
+
+    <div class="denom-list" id="denomList"></div>
+
+    <div class="total-highlight">
+      <div class="label">Running total</div>
+      <div class="grand-total" id="runningTotal">₦0.00</div>
+      <small id="runningNotesSummary">0 notes</small>
+    </div>
+
+    <div class="bottom-actions">
+      <div class="bottom-row">
+        <div class="bottom-total-block">
+          <span class="title">Total cash</span>
+          <span class="sub">all denominations</span>
+        </div>
+        <div class="bottom-amount" id="bottomTotal">₦0.00</div>
+      </div>
+      <button class="reset-btn" id="resetButton" aria-label="Reset count">
+        <span>↻</span> Reset count
+      </button>
+    </div>
+
+    <div class="footnote">
+      ⚡ Stack = 5,000 · Bundle = 500 · Pack = 100 notes
+    </div>
   </div>
 
-  <div class="footnote">
-    ⚡ Stack = 10,000 · Bundle = 500 · Pack = 100 notes
+  <!-- ============ REVERSE VIEW ============ -->
+  <div class="view" id="reverseView">
+    <div class="ref-strip">
+      <span><strong>Pack</strong> 100</span>
+      <span><strong>Bundle</strong> 500</span>
+      <span><strong>Stack</strong> 5k</span>
+    </div>
+
+    <div class="denom-list" id="reverseDenomList"></div>
+
+    <div class="total-highlight">
+      <div class="label">Total amount entered</div>
+      <div class="grand-total" id="reverseTotal">₦0.00</div>
+      <small id="reverseNotesSummary">0 notes total</small>
+    </div>
+
+    <div class="bottom-actions">
+      <div class="bottom-row">
+        <div class="bottom-total-block">
+          <span class="title">Cash entered</span>
+          <span class="sub">all denominations</span>
+        </div>
+        <div class="bottom-amount" id="reverseBottomTotal">₦0.00</div>
+      </div>
+      <button class="reset-btn" id="resetReverseButton" aria-label="Reset amounts">
+        <span>↻</span> Reset amounts
+      </button>
+    </div>
+
+    <div class="footnote">
+      ⚡ Enter amount per denomination to see its breakdown
+    </div>
   </div>
+
 </div>
 
 <script>
   (function() {
     const denominations = [1000, 500, 200, 100, 50, 20, 10, 5];
 
+    // ---------- KEY CONSTANTS ----------
+    const NOTES_PER_PACK = 100;
+    const NOTES_PER_BUNDLE = 500;
+    const NOTES_PER_STACK = 5000;  // ← changed from 10,000
+
+    // ---------- DOM refs ----------
     const denomList = document.getElementById('denomList');
     const runningTotalEl = document.getElementById('runningTotal');
     const bottomTotalEl = document.getElementById('bottomTotal');
     const runningNotesSummary = document.getElementById('runningNotesSummary');
     const resetBtn = document.getElementById('resetButton');
 
+    const btnForward = document.getElementById('btnForward');
+    const btnReverse = document.getElementById('btnReverse');
+    const modeSlider = document.getElementById('modeSlider');
+    const forwardView = document.getElementById('forwardView');
+    const reverseView = document.getElementById('reverseView');
+    const headerSubtitle = document.getElementById('headerSubtitle');
+
+    const reverseDenomList = document.getElementById('reverseDenomList');
+    const reverseTotalEl = document.getElementById('reverseTotal');
+    const reverseBottomTotalEl = document.getElementById('reverseBottomTotal');
+    const reverseNotesSummary = document.getElementById('reverseNotesSummary');
+    const resetReverseBtn = document.getElementById('resetReverseButton');
+
+    // ---------- helpers ----------
     const formatNaira = (value) => {
       return '₦' + value.toLocaleString('en-NG', {
         minimumFractionDigits: 2,
@@ -469,15 +741,44 @@
       return (isNaN(num) || num < 0) ? 0 : num;
     };
 
-    // Build denomination cards
+    const formatNumberInput = (str) => {
+      const digits = str.replace(/[^\d]/g, '');
+      if (!digits) return '';
+      return Number(digits).toLocaleString('en-NG');
+    };
+
+    // ---------- MODE TOGGLE ----------
+    function setMode(mode) {
+      if (mode === 'forward') {
+        btnForward.classList.add('active');
+        btnReverse.classList.remove('active');
+        modeSlider.classList.remove('reverse');
+        forwardView.classList.add('active');
+        reverseView.classList.remove('active');
+        headerSubtitle.textContent = 'Stack · Bundle · Pack';
+      } else {
+        btnReverse.classList.add('active');
+        btnForward.classList.remove('active');
+        modeSlider.classList.add('reverse');
+        reverseView.classList.add('active');
+        forwardView.classList.remove('active');
+        headerSubtitle.textContent = 'Cash → Count breakdown';
+        computeReverse();
+      }
+    }
+
+    btnForward.addEventListener('click', () => setMode('forward'));
+    btnReverse.addEventListener('click', () => setMode('reverse'));
+
+    // ==================================================
+    // FORWARD MODE
+    // ==================================================
     function buildCards() {
       denomList.innerHTML = '';
-
       denominations.forEach((denom, idx) => {
         const card = document.createElement('div');
         card.className = 'denom-card';
 
-        // header
         const header = document.createElement('div');
         header.className = 'denom-header';
 
@@ -507,7 +808,6 @@
         header.appendChild(rightHeader);
         card.appendChild(header);
 
-        // unit grid
         const grid = document.createElement('div');
         grid.className = 'unit-grid';
 
@@ -550,7 +850,7 @@
       };
     }
 
-    function updateAll() {
+    function updateForward() {
       let grandTotal = 0;
       let totalNotesSum = 0;
 
@@ -562,45 +862,194 @@
         const bundles = safeInt(inputs.bundles.value);
         const packs = safeInt(inputs.packs.value);
 
-        const notesFromStacks = stacks * 10000;
-        const notesFromBundles = bundles * 500;
-        const notesFromPacks = packs * 100;
-        const totalNotes = notesFromStacks + notesFromBundles + notesFromPacks;
-
+        // stack = 5,000 notes, bundle = 500, pack = 100
+        const totalNotes = stacks * NOTES_PER_STACK + bundles * NOTES_PER_BUNDLE + packs * NOTES_PER_PACK;
         const value = totalNotes * denom;
         grandTotal += value;
         totalNotesSum += totalNotes;
 
         const notesBadge = document.getElementById(`notes-badge-${idx}`);
-        if (notesBadge) {
-          notesBadge.textContent = totalNotes.toLocaleString('en-NG');
-        }
+        if (notesBadge) notesBadge.textContent = totalNotes.toLocaleString('en-NG');
 
         const valueBadge = document.getElementById(`value-badge-${idx}`);
-        if (valueBadge) {
-          valueBadge.textContent = formatNaira(value);
-        }
+        if (valueBadge) valueBadge.textContent = formatNaira(value);
       });
 
       const formattedTotal = formatNaira(grandTotal);
       if (runningTotalEl) runningTotalEl.textContent = formattedTotal;
       if (bottomTotalEl) bottomTotalEl.textContent = formattedTotal;
-
       if (runningNotesSummary) {
         runningNotesSummary.textContent = totalNotesSum.toLocaleString('en-NG') + ' notes';
       }
     }
 
-    function resetAll() {
+    function resetForward() {
       denominations.forEach((_, idx) => {
         const inputs = getRowInputs(idx);
         if (inputs.stacks) inputs.stacks.value = '0';
         if (inputs.bundles) inputs.bundles.value = '0';
         if (inputs.packs) inputs.packs.value = '0';
       });
-      updateAll();
+      updateForward();
     }
 
+    // ==================================================
+    // REVERSE MODE — per-denomination amount inputs
+    // ==================================================
+    function buildReverseCards() {
+      reverseDenomList.innerHTML = '';
+
+      denominations.forEach((denom, idx) => {
+        const card = document.createElement('div');
+        card.className = 'reverse-denom-card';
+        card.id = `reverse-card-${idx}`;
+
+        const header = document.createElement('div');
+        header.className = 'reverse-denom-header';
+
+        const label = document.createElement('div');
+        label.className = 'reverse-denom-label';
+        label.innerHTML = `₦${denom.toLocaleString('en-NG')} <small>note</small>`;
+
+        const inputWrap = document.createElement('div');
+        inputWrap.className = 'reverse-amount-input-wrap';
+
+        const currency = document.createElement('span');
+        currency.className = 'currency';
+        currency.textContent = '₦';
+
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.inputMode = 'numeric';
+        inp.placeholder = '0';
+        inp.autocomplete = 'off';
+        inp.setAttribute('aria-label', `Amount of ${denom} naira notes`);
+        inp.dataset.reverseRow = idx;
+        inp.id = `reverse-input-${idx}`;
+
+        inputWrap.appendChild(currency);
+        inputWrap.appendChild(inp);
+
+        header.appendChild(label);
+        header.appendChild(inputWrap);
+        card.appendChild(header);
+
+        const breakdown = document.createElement('div');
+        breakdown.className = 'reverse-breakdown hidden';
+        breakdown.id = `reverse-breakdown-${idx}`;
+        card.appendChild(breakdown);
+
+        reverseDenomList.appendChild(card);
+      });
+    }
+
+    // Compute breakdown with STACK = 5,000 notes
+    function computeBreakdownForAmount(amount, denom) {
+      const noteCount = Math.floor(amount / denom);
+      if (noteCount <= 0) return null;
+
+      let notes = noteCount;
+      const stacks = Math.floor(notes / NOTES_PER_STACK);
+      notes -= stacks * NOTES_PER_STACK;
+      const bundles = Math.floor(notes / NOTES_PER_BUNDLE);
+      notes -= bundles * NOTES_PER_BUNDLE;
+      const packs = Math.floor(notes / NOTES_PER_PACK);
+      notes -= packs * NOTES_PER_PACK;
+      const loose = notes;
+
+      return {
+        denom,
+        stacks,
+        bundles,
+        packs,
+        loose,
+        totalNotes: noteCount,
+        subtotal: noteCount * denom
+      };
+    }
+
+    function renderBreakdownPills(idx, breakdown, amount, denom) {
+      const container = document.getElementById(`reverse-breakdown-${idx}`);
+      if (!container) return;
+
+      if (amount <= 0) {
+        container.classList.add('hidden');
+        container.innerHTML = '';
+        return;
+      }
+
+      container.classList.remove('hidden');
+
+      if (amount % denom !== 0) {
+        const closest = Math.floor(amount / denom) * denom;
+        container.innerHTML = `<span class="bd-note">⚠️ ₦${amount.toLocaleString('en-NG')} is not a multiple of ₦${denom.toLocaleString('en-NG')}. Closest is ₦${closest.toLocaleString('en-NG')}.</span>`;
+        return;
+      }
+
+      if (!breakdown) {
+        container.innerHTML = `<span class="bd-note">Amount too small</span>`;
+        return;
+      }
+
+      const pills = [];
+      pills.push(`<span class="bd-pill ${breakdown.stacks > 0 ? '' : 'zero'}"><span class="num">${breakdown.stacks.toLocaleString('en-NG')}</span><span class="unit">stack${breakdown.stacks !== 1 ? 's' : ''}</span></span>`);
+      pills.push(`<span class="bd-pill ${breakdown.bundles > 0 ? '' : 'zero'}"><span class="num">${breakdown.bundles.toLocaleString('en-NG')}</span><span class="unit">bundle${breakdown.bundles !== 1 ? 's' : ''}</span></span>`);
+      pills.push(`<span class="bd-pill ${breakdown.packs > 0 ? '' : 'zero'}"><span class="num">${breakdown.packs.toLocaleString('en-NG')}</span><span class="unit">pack${breakdown.packs !== 1 ? 's' : ''}</span></span>`);
+      pills.push(`<span class="bd-pill ${breakdown.loose > 0 ? '' : 'zero'}"><span class="num">${breakdown.loose.toLocaleString('en-NG')}</span><span class="unit">loose</span></span>`);
+
+      container.innerHTML = pills.join('');
+    }
+
+    function computeReverse() {
+      let grandTotal = 0;
+      let totalNotesSum = 0;
+
+      denominations.forEach((denom, idx) => {
+        const inp = document.getElementById(`reverse-input-${idx}`);
+        const card = document.getElementById(`reverse-card-${idx}`);
+        if (!inp) return;
+
+        const raw = inp.value.replace(/[^\d]/g, '');
+        const amount = raw ? Number(raw) : 0;
+
+        if (card) {
+          if (amount > 0) card.classList.add('has-value');
+          else card.classList.remove('has-value');
+        }
+
+        if (amount > 0) {
+          grandTotal += amount;
+          const breakdown = computeBreakdownForAmount(amount, denom);
+          if (breakdown) {
+            totalNotesSum += breakdown.totalNotes;
+            renderBreakdownPills(idx, breakdown, amount, denom);
+          } else {
+            renderBreakdownPills(idx, null, amount, denom);
+          }
+        } else {
+          renderBreakdownPills(idx, null, 0, denom);
+        }
+      });
+
+      const formattedTotal = formatNaira(grandTotal);
+      if (reverseTotalEl) reverseTotalEl.textContent = formattedTotal;
+      if (reverseBottomTotalEl) reverseBottomTotalEl.textContent = formattedTotal;
+      if (reverseNotesSummary) {
+        reverseNotesSummary.textContent = totalNotesSum.toLocaleString('en-NG') + ' notes total';
+      }
+    }
+
+    function resetReverse() {
+      denominations.forEach((_, idx) => {
+        const inp = document.getElementById(`reverse-input-${idx}`);
+        if (inp) inp.value = '';
+      });
+      computeReverse();
+    }
+
+    // ==================================================
+    // EVENT LISTENERS
+    // ==================================================
     function attachListeners() {
       document.addEventListener('input', (e) => {
         if (e.target.matches('input[type="number"][data-row]')) {
@@ -613,7 +1062,7 @@
               e.target.value = num;
             }
           }
-          updateAll();
+          updateForward();
         }
       });
 
@@ -626,19 +1075,48 @@
             const num = Math.floor(Number(val));
             e.target.value = (isNaN(num) || num < 0) ? 0 : num;
           }
-          updateAll();
+          updateForward();
         }
       }, true);
 
-      if (resetBtn) {
-        resetBtn.addEventListener('click', resetAll);
-      }
+      if (resetBtn) resetBtn.addEventListener('click', resetForward);
+      if (resetReverseBtn) resetReverseBtn.addEventListener('click', resetReverse);
+
+      document.addEventListener('input', (e) => {
+        if (e.target.matches('input[data-reverse-row]')) {
+          const formatted = formatNumberInput(e.target.value);
+          const cursorPos = e.target.selectionStart;
+          const prevLen = e.target.value.length;
+          e.target.value = formatted;
+          const newLen = formatted.length;
+          const newPos = cursorPos + (newLen - prevLen);
+          try {
+            e.target.setSelectionRange(newPos, newPos);
+          } catch (err) {}
+          computeReverse();
+        }
+      });
+
+      document.addEventListener('keypress', (e) => {
+        if (e.target.matches('input[data-reverse-row]')) {
+          const char = String.fromCharCode(e.which);
+          if (!/[\d]/.test(char) && !e.ctrlKey && !e.metaKey) {
+            e.preventDefault();
+          }
+        }
+      });
     }
 
+    // ==================================================
+    // INIT
+    // ==================================================
     function init() {
       buildCards();
+      buildReverseCards();
       attachListeners();
-      resetAll();
+      resetForward();
+      resetReverse();
+      setMode('forward');
     }
 
     init();
