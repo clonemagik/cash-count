@@ -3,13 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
-  <title>Cash Count · Naira tally</title>
+  <title>Vault Calculator · Naira tally</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --orange: #f58220;
@@ -24,12 +20,11 @@
       --radius: 18px;
       --green: #1a7a4c;
       --green-soft: #e6f5ed;
+      --red: #c53030;
+      --red-soft: #fde8e8;
     }
 
-    html {
-      font-size: 16px;
-      -webkit-text-size-adjust: 100%;
-    }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
 
     body {
       background: var(--bg);
@@ -41,7 +36,6 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* header */
     .app-header {
       background: linear-gradient(135deg, #17324d 0%, #1e405e 100%);
       color: white;
@@ -70,18 +64,9 @@
       line-height: 1.4;
     }
 
-    .app-header p {
-      font-size: 0.8rem;
-      opacity: 0.85;
-      font-weight: 400;
-    }
+    .app-header p { font-size: 0.8rem; opacity: 0.85; font-weight: 400; }
 
-    /* main container */
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 0 12px;
-    }
+    .container { max-width: 600px; margin: 0 auto; padding: 0 12px; }
 
     /* mode toggle */
     .mode-toggle {
@@ -113,9 +98,7 @@
       z-index: 1;
     }
 
-    .mode-btn.active {
-      color: white;
-    }
+    .mode-btn.active { color: white; }
 
     .mode-slider {
       position: absolute;
@@ -130,11 +113,8 @@
       box-shadow: 0 2px 8px rgba(20, 43, 68, 0.3);
     }
 
-    .mode-slider.reverse {
-      transform: translateX(100%);
-    }
+    .mode-slider.reverse { transform: translateX(100%); }
 
-    /* compact reference strip */
     .ref-strip {
       background: var(--white);
       border-radius: 50px;
@@ -152,12 +132,7 @@
       color: #3d5a73;
     }
 
-    .ref-strip span {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      white-space: nowrap;
-    }
+    .ref-strip span { display: flex; align-items: center; gap: 4px; white-space: nowrap; }
 
     .ref-strip strong {
       color: var(--orange-deep);
@@ -168,35 +143,85 @@
       font-size: 0.65rem;
     }
 
-    /* ---- view panels ---- */
-    .view {
+    /* daily reset banner */
+    .reset-banner {
+      background: #fef8ec;
+      border: 1px solid #f4d29a;
+      color: #8a6a1a;
+      border-radius: 50px;
+      padding: 8px 16px;
+      margin-bottom: 12px;
+      font-size: 0.72rem;
+      font-weight: 600;
       display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-align: center;
+      animation: fadeIn 0.3s ease;
     }
 
-    .view.active {
-      display: block;
-      animation: fadeIn 0.2s ease;
-    }
+    .reset-banner.show { display: flex; }
+
+    .reset-banner .icon { font-size: 0.95rem; }
+
+    .view { display: none; }
+    .view.active { display: block; animation: fadeIn 0.2s ease; }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ---- denomination cards ---- */
-    .denom-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .denom-card {
+    .section-card {
       background: var(--white);
       border-radius: var(--radius);
       border: 1px solid var(--line);
       box-shadow: var(--shadow);
-      padding: 12px 12px 10px;
+      padding: 14px 14px 12px;
+      margin-bottom: 14px;
+      border-top: 3px solid var(--navy);
+    }
+
+    .section-card.till { border-top: 3px solid var(--orange); }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    .section-title {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title .icon { font-size: 1.1rem; }
+
+    .section-title small {
+      font-weight: 500;
+      font-size: 0.65rem;
+      color: #6a829b;
+      display: block;
+    }
+
+    .bulk-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .denom-card {
+      background: #f9fcff;
+      border-radius: 14px;
+      border: 1px solid #e4edf8;
+      padding: 10px 10px 9px;
       transition: 0.1s;
     }
 
@@ -204,12 +229,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .denom-label {
       font-weight: 800;
-      font-size: 1.1rem;
+      font-size: 1rem;
       color: var(--navy);
       letter-spacing: -0.01em;
     }
@@ -222,8 +247,8 @@
     }
 
     .denom-total-notes {
-      font-size: 0.7rem;
-      background: #f0f6ff;
+      font-size: 0.68rem;
+      background: #eef4fb;
       padding: 3px 9px;
       border-radius: 40px;
       font-weight: 600;
@@ -232,7 +257,7 @@
 
     .denom-total-value {
       font-weight: 800;
-      font-size: 1rem;
+      font-size: 0.95rem;
       color: var(--orange-deep);
       background: #fffaf5;
       padding: 3px 10px;
@@ -249,14 +274,14 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      background: #f9fcff;
-      border-radius: 12px;
+      background: #ffffff;
+      border-radius: 10px;
       padding: 6px 4px 5px;
       border: 1px solid #e4edf8;
     }
 
     .unit-item label {
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       text-transform: uppercase;
       letter-spacing: 0.02em;
       color: #5a728b;
@@ -266,10 +291,10 @@
 
     .unit-item input {
       width: 100%;
-      padding: 9px 4px;
+      padding: 8px 4px;
       border: 1.5px solid #d0ddee;
-      border-radius: 10px;
-      font-size: 1rem;
+      border-radius: 9px;
+      font-size: 0.95rem;
       font-weight: 700;
       text-align: center;
       color: var(--navy);
@@ -294,150 +319,98 @@
       background: #fffcf9;
     }
 
-    /* ---- REVERSE MODE per-denomination ---- */
-    .reverse-denom-card {
-      background: var(--white);
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow);
-      padding: 12px 12px 10px;
-      margin-bottom: 10px;
-      transition: 0.15s;
-    }
-
-    .reverse-denom-card.has-value {
-      border-color: #ffd0a4;
-      background: linear-gradient(to bottom, #fffdfb, #ffffff);
-    }
-
-    .reverse-denom-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      gap: 8px;
-    }
-
-    .reverse-denom-label {
-      font-weight: 800;
-      font-size: 1.1rem;
-      color: var(--navy);
-      letter-spacing: -0.01em;
-      display: flex;
-      align-items: center;
+    .till-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
       gap: 6px;
+      margin-bottom: 10px;
     }
 
-    .reverse-denom-label small {
-      font-weight: 500;
-      font-size: 0.65rem;
-      color: #6a829b;
-    }
-
-    .reverse-amount-input-wrap {
+    .till-item {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 4px;
-      background: #f9fcff;
-      border: 1.5px solid #d0ddee;
+      background: #fffaf5;
       border-radius: 12px;
-      padding: 2px 10px;
-      transition: 0.15s;
-      flex: 1;
-      max-width: 160px;
+      padding: 6px 4px 5px;
+      border: 1px solid #ffe2c7;
     }
 
-    .reverse-amount-input-wrap:focus-within {
-      border-color: var(--orange);
-      box-shadow: 0 0 0 3px rgba(245, 130, 32, 0.12);
-      background: #fffcf9;
-    }
-
-    .reverse-amount-input-wrap .currency {
-      font-size: 0.95rem;
-      font-weight: 800;
+    .till-item label {
+      font-size: 0.62rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
       color: var(--orange-deep);
+      font-weight: 700;
+      margin-bottom: 3px;
     }
 
-    .reverse-amount-input-wrap input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      font-family: inherit;
-      font-size: 1rem;
+    .till-item input {
+      width: 100%;
+      padding: 8px 2px;
+      border: 1.5px solid #ffd0a4;
+      border-radius: 9px;
+      font-size: 0.95rem;
       font-weight: 700;
+      text-align: center;
       color: var(--navy);
-      padding: 9px 0;
-      outline: none;
-      min-width: 0;
-      text-align: right;
+      background: white;
+      font-family: inherit;
+      transition: 0.15s;
       -moz-appearance: textfield;
       appearance: textfield;
+      min-width: 0;
     }
 
-    .reverse-amount-input-wrap input::-webkit-outer-spin-button,
-    .reverse-amount-input-wrap input::-webkit-inner-spin-button {
+    .till-item input::-webkit-outer-spin-button,
+    .till-item input::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }
 
-    .reverse-amount-input-wrap input::placeholder {
-      color: #b0c2d4;
-      font-weight: 600;
+    .till-item input:focus {
+      outline: none;
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(245, 130, 32, 0.18);
+      background: #fffcf9;
     }
 
-    /* breakdown pills inside reverse card */
-    .reverse-breakdown {
+    .section-footer {
       display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
+      justify-content: space-between;
+      align-items: center;
       padding-top: 10px;
       border-top: 1px dashed #e4edf8;
-      margin-top: 10px;
-      min-height: 0;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
-    .reverse-breakdown.hidden {
-      display: none;
-    }
+    .section-footer.till { border-top-color: #ffe2c7; }
 
-    .bd-pill {
-      background: #f0f6ff;
-      border-radius: 40px;
-      padding: 4px 10px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: var(--navy);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      white-space: nowrap;
-    }
-
-    .bd-pill .num {
-      color: var(--orange-deep);
-      font-size: 0.85rem;
-    }
-
-    .bd-pill .unit {
-      font-size: 0.6rem;
+    .section-footer-label {
+      font-size: 0.72rem;
       text-transform: uppercase;
+      letter-spacing: 0.04em;
       color: #6a829b;
-      font-weight: 600;
+      font-weight: 700;
     }
 
-    .bd-pill.zero {
-      opacity: 0.35;
+    .section-footer.till .section-footer-label { color: #8a6a4a; }
+
+    .section-footer-value {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--navy);
+      background: #eef4fb;
+      padding: 4px 12px;
+      border-radius: 40px;
     }
 
-    .bd-note {
-      font-size: 0.7rem;
-      color: #6a829b;
-      font-style: italic;
-      padding: 4px 0;
+    .section-footer.till .section-footer-value {
+      color: var(--orange-deep);
+      background: #fff4e9;
     }
 
-    /* running total card */
     .total-highlight {
       background: linear-gradient(145deg, #142b44, #1e3c5a);
       color: white;
@@ -452,7 +425,7 @@
       letter-spacing: 0.06em;
       text-transform: uppercase;
       opacity: 0.75;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .grand-total {
@@ -461,17 +434,48 @@
       line-height: 1.1;
       word-break: break-word;
       color: #ffd9b3;
-      margin-bottom: 2px;
+      margin-bottom: 10px;
     }
 
-    .total-highlight small {
-      font-size: 0.7rem;
-      opacity: 0.7;
-      display: block;
-      margin-top: 2px;
+    .total-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
     }
 
-    /* bottom bar */
+    .total-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      gap: 8px;
+    }
+
+    .total-line .line-label {
+      opacity: 0.75;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 0.68rem;
+    }
+
+    .total-line .line-value {
+      font-weight: 700;
+      color: #ffd9b3;
+      font-size: 0.88rem;
+      white-space: nowrap;
+    }
+
+    .total-line.grand .line-label { opacity: 0.9; }
+
+    .total-line.grand .line-value {
+      color: #ffb366;
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
     .bottom-actions {
       background: var(--white);
       border-radius: var(--radius);
@@ -491,15 +495,8 @@
       width: 100%;
     }
 
-    .bottom-total-block .title {
-      font-weight: 700;
-      font-size: 0.85rem;
-    }
-
-    .bottom-total-block .sub {
-      font-size: 0.65rem;
-      color: #6a829b;
-    }
+    .bottom-total-block .title { font-weight: 700; font-size: 0.85rem; }
+    .bottom-total-block .sub { font-size: 0.65rem; color: #6a829b; }
 
     .bottom-amount {
       font-size: 1.7rem;
@@ -534,15 +531,12 @@
       touch-action: manipulation;
     }
 
-    .reset-btn:hover,
-    .reset-btn:active {
+    .reset-btn:hover, .reset-btn:active {
       background: var(--orange-deep);
       box-shadow: 0 8px 18px rgba(245, 130, 32, 0.35);
     }
 
-    .reset-btn:active {
-      transform: scale(0.98);
-    }
+    .reset-btn:active { transform: scale(0.98); }
 
     .footnote {
       margin-top: 8px;
@@ -552,12 +546,288 @@
       padding: 0 8px;
     }
 
-    /* ---- larger screens ---- */
+    /* ============ DAILY LOG ============ */
+    .daily-log {
+      background: var(--white);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      margin-top: 16px;
+      border-top: 3px solid var(--green);
+    }
+
+    .daily-log-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    .daily-log-title {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .daily-log-title .icon { font-size: 1.1rem; }
+
+    .daily-log-title small {
+      font-weight: 500;
+      font-size: 0.65rem;
+      color: #6a829b;
+      display: block;
+    }
+
+    .today-summary {
+      background: #f4faf6;
+      border: 1px solid #cbe8d7;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+
+    .today-date {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--green);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .today-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      padding: 3px 0;
+    }
+
+    .today-line .tl-label {
+      color: #4a7a5e;
+      font-weight: 600;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .today-line .tl-value {
+      font-weight: 700;
+      color: var(--navy);
+      font-size: 0.9rem;
+    }
+
+    .today-line.total {
+      border-top: 1px solid #cbe8d7;
+      margin-top: 6px;
+      padding-top: 8px;
+    }
+
+    .today-line.total .tl-value {
+      color: var(--green);
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+
+    .log-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .log-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: 60px;
+      border: none;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .log-btn:active { transform: scale(0.98); }
+
+    .log-btn.primary {
+      background: var(--green);
+      color: white;
+      box-shadow: 0 4px 12px rgba(26, 122, 76, 0.25);
+    }
+
+    .log-btn.primary:hover { background: #15623c; }
+
+    .log-btn.secondary {
+      background: #f0f6ff;
+      color: var(--navy);
+      border: 1px solid #d8e5f2;
+    }
+
+    .log-btn.secondary:hover { background: #e4eefb; }
+
+    .log-btn.danger {
+      background: var(--red-soft);
+      color: var(--red);
+      border: 1px solid #f8d0d0;
+    }
+
+    .log-btn.danger:hover { background: #fbd5d5; }
+
+    .log-btn-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .log-btn-row .log-btn { flex: 1; }
+
+    .saved-entries-title {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #8ba3ba;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .saved-entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 12px;
+      background: #f9fcff;
+      border: 1px solid #e4edf8;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      gap: 8px;
+    }
+
+    .saved-entry:last-child { margin-bottom: 0; }
+
+    .saved-entry-date {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--navy);
+      min-width: 0;
+      flex-shrink: 0;
+    }
+
+    .saved-entry-value {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--orange-deep);
+      flex: 1;
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .saved-entry-del {
+      background: transparent;
+      border: none;
+      color: #b0c2d4;
+      font-size: 1.1rem;
+      line-height: 1;
+      padding: 4px 6px;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: 0.15s;
+      flex-shrink: 0;
+    }
+
+    .saved-entry-del:hover {
+      background: var(--red-soft);
+      color: var(--red);
+    }
+
+    .empty-log {
+      text-align: center;
+      padding: 20px 12px;
+      color: #8ba3ba;
+      font-size: 0.78rem;
+    }
+
+    .empty-log .icon {
+      font-size: 1.6rem;
+      display: block;
+      margin-bottom: 6px;
+      opacity: 0.5;
+    }
+
+    /* toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--navy);
+      color: white;
+      padding: 12px 22px;
+      border-radius: 60px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      box-shadow: 0 8px 24px rgba(20, 43, 68, 0.35);
+      z-index: 100;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+      max-width: 90vw;
+      text-align: center;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success { background: var(--green); }
+    .toast.error { background: var(--red); }
+
+    /* version tag */
+    .version-tag {
+      margin-top: 20px;
+      padding: 14px 16px 10px;
+      text-align: center;
+      border-top: 1px dashed var(--line);
+    }
+
+    .version-tag .version-num {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--orange-deep);
+      background: var(--orange-soft);
+      padding: 5px 14px;
+      border-radius: 40px;
+      margin-bottom: 6px;
+    }
+
+    .version-tag .version-label {
+      font-size: 0.62rem;
+      color: #8ba3ba;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
     @media (min-width: 600px) {
-      .denom-list {
+      .bulk-inner {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 12px;
+        gap: 10px;
       }
 
       .bottom-actions {
@@ -581,31 +851,25 @@
         flex-shrink: 0;
       }
 
-      .app-header h1 {
-        font-size: 2rem;
+      .log-actions {
+        flex-direction: row;
       }
 
-      .grand-total {
-        font-size: 2.4rem;
-      }
+      .log-btn-row { flex: 2; }
+
+      .log-btn { flex: 1; }
+
+      .app-header h1 { font-size: 2rem; }
+      .grand-total { font-size: 2.4rem; }
     }
 
-    /* ensure inputs don't zoom on ios */
     @supports (-webkit-touch-callout: none) {
-      .unit-item input,
-      .reverse-amount-input-wrap input {
-        font-size: 16px;
-      }
+      .unit-item input, .till-item input { font-size: 16px; }
     }
 
-    /* safe area for notches */
     @supports (padding: max(0px)) {
-      body {
-        padding-bottom: max(24px, env(safe-area-inset-bottom));
-      }
-      .app-header {
-        padding-top: max(18px, env(safe-area-inset-top));
-      }
+      body { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+      .app-header { padding-top: max(18px, env(safe-area-inset-top)); }
     }
   </style>
 </head>
@@ -613,14 +877,18 @@
 
 <header class="app-header">
   <div class="container" style="padding:0;">
-    <h1>
-      <span>₦</span> Cash Count
-    </h1>
-    <p id="headerSubtitle">Stack · Bundle · Pack</p>
+    <h1><span>₦</span> Vault Calculator</h1>
+    <p id="headerSubtitle">Stack · Bundle · Pack · Till</p>
   </div>
 </header>
 
 <div class="container">
+
+  <!-- daily reset banner -->
+  <div class="reset-banner" id="resetBanner">
+    <span class="icon">✨</span>
+    New day — calculator has been reset to zero
+  </div>
 
   <!-- mode toggle -->
   <div class="mode-toggle" role="tablist">
@@ -637,19 +905,67 @@
       <span><strong>Stack</strong> 5k</span>
     </div>
 
-    <div class="denom-list" id="denomList"></div>
+    <!-- BULK SECTION -->
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="icon">📦</span>
+          <div>
+            BULK
+            <small>stacks · bundles · packs</small>
+          </div>
+        </div>
+      </div>
+      <div class="bulk-inner" id="denomList"></div>
+      <div class="section-footer" style="margin-top:12px;">
+        <span class="section-footer-label">Bulk total</span>
+        <span class="section-footer-value" id="bulkTotalValue">₦0.00</span>
+      </div>
+    </div>
 
+    <!-- TILL SECTION -->
+    <div class="section-card till">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="icon">🪙</span>
+          <div>
+            TILL
+            <small>loose notes · max 99 each</small>
+          </div>
+        </div>
+      </div>
+      <div class="till-grid" id="tillGrid"></div>
+      <div class="section-footer till">
+        <span class="section-footer-label">Till total</span>
+        <span class="section-footer-value" id="tillTotalValue">₦0.00</span>
+      </div>
+    </div>
+
+    <!-- RUNNING TOTAL -->
     <div class="total-highlight">
       <div class="label">Running total</div>
       <div class="grand-total" id="runningTotal">₦0.00</div>
-      <small id="runningNotesSummary">0 notes</small>
+      <div class="total-breakdown">
+        <div class="total-line">
+          <span class="line-label">Bulk</span>
+          <span class="line-value" id="bulkLine">0 notes · ₦0.00</span>
+        </div>
+        <div class="total-line">
+          <span class="line-label">Till</span>
+          <span class="line-value" id="tillLine">0 notes · ₦0.00</span>
+        </div>
+        <div class="total-line grand">
+          <span class="line-label">Grand</span>
+          <span class="line-value" id="grandLine">0 notes · ₦0.00</span>
+        </div>
+      </div>
     </div>
 
     <div class="bottom-actions">
       <div class="bottom-row">
         <div class="bottom-total-block">
           <span class="title">Total cash</span>
-          <span class="sub">all denominations</span>
+          <span class="sub">bulk + till</span>
         </div>
         <div class="bottom-amount" id="bottomTotal">₦0.00</div>
       </div>
@@ -671,12 +987,23 @@
       <span><strong>Stack</strong> 5k</span>
     </div>
 
-    <div class="denom-list" id="reverseDenomList"></div>
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title">
+          <span class="icon">💰</span>
+          <div>
+            CASH → COUNT
+            <small>enter amount per denomination</small>
+          </div>
+        </div>
+      </div>
+      <div class="bulk-inner" id="reverseDenomList"></div>
+    </div>
 
     <div class="total-highlight">
       <div class="label">Total amount entered</div>
       <div class="grand-total" id="reverseTotal">₦0.00</div>
-      <small id="reverseNotesSummary">0 notes total</small>
+      <small id="reverseNotesSummary" style="font-size:0.7rem;opacity:0.7;">0 notes total</small>
     </div>
 
     <div class="bottom-actions">
@@ -697,23 +1024,96 @@
     </div>
   </div>
 
+  <!-- ============ DAILY LOG ============ -->
+  <div class="daily-log">
+    <div class="daily-log-header">
+      <div class="daily-log-title">
+        <span class="icon">📅</span>
+        <div>
+          DAILY LOG
+          <small>one entry per day</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="today-summary">
+      <div class="today-date" id="todayDate">—</div>
+      <div class="today-line">
+        <span class="tl-label">Bulk</span>
+        <span class="tl-value" id="todayBulk">₦0.00</span>
+      </div>
+      <div class="today-line">
+        <span class="tl-label">Till</span>
+        <span class="tl-value" id="todayTill">₦0.00</span>
+      </div>
+      <div class="today-line total">
+        <span class="tl-label">Total</span>
+        <span class="tl-value" id="todayTotal">₦0.00</span>
+      </div>
+    </div>
+
+    <div class="log-actions">
+      <button class="log-btn primary" id="saveTodayBtn">
+        <span>💾</span> Save today's count
+      </button>
+      <div class="log-btn-row">
+        <button class="log-btn secondary" id="exportCsvBtn">
+          <span>📄</span> CSV
+        </button>
+        <button class="log-btn secondary" id="exportJsonBtn">
+          <span>📦</span> JSON
+        </button>
+        <button class="log-btn danger" id="clearAllBtn">
+          <span>🗑️</span> Clear
+        </button>
+      </div>
+    </div>
+
+    <div class="saved-entries-title">Saved entries</div>
+    <div id="savedEntriesList">
+      <div class="empty-log">
+        <span class="icon">📭</span>
+        No saved entries yet
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ VERSION TAG ============ -->
+  <div class="version-tag">
+    <div class="version-num">Version 1.3</div>
+    <div class="version-label">Vault Calculator</div>
+  </div>
+
 </div>
+
+<!-- toast -->
+<div class="toast" id="toast"></div>
 
 <script>
   (function() {
     const denominations = [1000, 500, 200, 100, 50, 20, 10, 5];
 
-    // ---------- KEY CONSTANTS ----------
     const NOTES_PER_PACK = 100;
     const NOTES_PER_BUNDLE = 500;
-    const NOTES_PER_STACK = 5000;  // ← changed from 10,000
+    const NOTES_PER_STACK = 5000;
+    const TILL_MAX = 99;
+    const STORAGE_KEY = 'vaultCalculator.log.v1';
+    const LAST_OPEN_KEY = 'vaultCalculator.lastOpenDate';
+    const MAX_DISPLAY_ENTRIES = 7;
 
     // ---------- DOM refs ----------
     const denomList = document.getElementById('denomList');
     const runningTotalEl = document.getElementById('runningTotal');
     const bottomTotalEl = document.getElementById('bottomTotal');
-    const runningNotesSummary = document.getElementById('runningNotesSummary');
     const resetBtn = document.getElementById('resetButton');
+
+    const bulkLine = document.getElementById('bulkLine');
+    const tillLine = document.getElementById('tillLine');
+    const grandLine = document.getElementById('grandLine');
+
+    const tillGrid = document.getElementById('tillGrid');
+    const tillTotalValue = document.getElementById('tillTotalValue');
+    const bulkTotalValue = document.getElementById('bulkTotalValue');
 
     const btnForward = document.getElementById('btnForward');
     const btnReverse = document.getElementById('btnReverse');
@@ -721,12 +1121,25 @@
     const forwardView = document.getElementById('forwardView');
     const reverseView = document.getElementById('reverseView');
     const headerSubtitle = document.getElementById('headerSubtitle');
+    const resetBanner = document.getElementById('resetBanner');
 
     const reverseDenomList = document.getElementById('reverseDenomList');
     const reverseTotalEl = document.getElementById('reverseTotal');
     const reverseBottomTotalEl = document.getElementById('reverseBottomTotal');
     const reverseNotesSummary = document.getElementById('reverseNotesSummary');
     const resetReverseBtn = document.getElementById('resetReverseButton');
+
+    // daily log refs
+    const todayDateEl = document.getElementById('todayDate');
+    const todayBulkEl = document.getElementById('todayBulk');
+    const todayTillEl = document.getElementById('todayTill');
+    const todayTotalEl = document.getElementById('todayTotal');
+    const saveTodayBtn = document.getElementById('saveTodayBtn');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+    const exportJsonBtn = document.getElementById('exportJsonBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    const savedEntriesList = document.getElementById('savedEntriesList');
+    const toastEl = document.getElementById('toast');
 
     // ---------- helpers ----------
     const formatNaira = (value) => {
@@ -747,7 +1160,80 @@
       return Number(digits).toLocaleString('en-NG');
     };
 
-    // ---------- MODE TOGGLE ----------
+    const todayKey = () => {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    };
+
+    const formatDisplayDate = (iso) => {
+      const [y, m, d] = iso.split('-');
+      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      return `${parseInt(d, 10)} ${months[parseInt(m, 10) - 1]} ${y}`;
+    };
+
+    const showToast = (msg, type = '') => {
+      toastEl.textContent = msg;
+      toastEl.className = 'toast show' + (type ? ' ' + type : '');
+      clearTimeout(toastEl._t);
+      toastEl._t = setTimeout(() => {
+        toastEl.className = 'toast' + (type ? ' ' + type : '');
+      }, 2200);
+    };
+
+    // ---------- STORAGE ----------
+    const loadLog = () => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return { entries: [] };
+        const parsed = JSON.parse(raw);
+        if (!parsed || !Array.isArray(parsed.entries)) return { entries: [] };
+        return parsed;
+      } catch (e) {
+        console.warn('Log load failed', e);
+        return { entries: [] };
+      }
+    };
+
+    const saveLog = (log) => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(log));
+        return true;
+      } catch (e) {
+        console.warn('Log save failed', e);
+        return false;
+      }
+    };
+
+    // ---------- DAILY AUTO-RESET ----------
+    // Detect if a new day has started since the last time the app was opened.
+    // If so, reset the calculator inputs. The saved log is never touched.
+    function checkDailyReset() {
+      const today = todayKey();
+      let lastOpen = null;
+      try {
+        lastOpen = localStorage.getItem(LAST_OPEN_KEY);
+      } catch (e) {
+        console.warn('Could not read last open date', e);
+      }
+
+      const isNewDay = lastOpen && lastOpen !== today;
+
+      // update last open date
+      try {
+        localStorage.setItem(LAST_OPEN_KEY, today);
+      } catch (e) {
+        console.warn('Could not save last open date', e);
+      }
+
+      return isNewDay;
+    }
+
+    // ==================================================
+    // MODE TOGGLE
+    // ==================================================
     function setMode(mode) {
       if (mode === 'forward') {
         btnForward.classList.add('active');
@@ -755,7 +1241,7 @@
         modeSlider.classList.remove('reverse');
         forwardView.classList.add('active');
         reverseView.classList.remove('active');
-        headerSubtitle.textContent = 'Stack · Bundle · Pack';
+        headerSubtitle.textContent = 'Stack · Bundle · Pack · Till';
       } else {
         btnReverse.classList.add('active');
         btnForward.classList.remove('active');
@@ -842,6 +1328,31 @@
       });
     }
 
+    function buildTillGrid() {
+      tillGrid.innerHTML = '';
+      denominations.forEach((denom, idx) => {
+        const item = document.createElement('div');
+        item.className = 'till-item';
+
+        const lbl = document.createElement('label');
+        lbl.textContent = `₦${denom.toLocaleString('en-NG')}`;
+
+        const inp = document.createElement('input');
+        inp.type = 'number';
+        inp.min = '0';
+        inp.max = TILL_MAX;
+        inp.step = '1';
+        inp.value = '0';
+        inp.inputMode = 'numeric';
+        inp.setAttribute('aria-label', `Till notes of ${denom} naira`);
+        inp.dataset.tillRow = idx;
+
+        item.appendChild(lbl);
+        item.appendChild(inp);
+        tillGrid.appendChild(item);
+      });
+    }
+
     function getRowInputs(rowIndex) {
       return {
         stacks: document.querySelector(`input[data-row="${rowIndex}"][data-unit="stacks"]`),
@@ -850,9 +1361,26 @@
       };
     }
 
+    function getTillInput(rowIndex) {
+      return document.querySelector(`input[data-till-row="${rowIndex}"]`);
+    }
+
+    const forwardState = {
+      bulkTotal: 0,
+      tillTotal: 0,
+      grandTotal: 0,
+      bulkNotes: 0,
+      tillNotes: 0,
+      grandNotes: 0,
+      breakdown: {}
+    };
+
     function updateForward() {
-      let grandTotal = 0;
-      let totalNotesSum = 0;
+      let bulkTotal = 0;
+      let bulkNotesSum = 0;
+      let tillTotal = 0;
+      let tillNotesSum = 0;
+      const breakdown = {};
 
       denominations.forEach((denom, idx) => {
         const inputs = getRowInputs(idx);
@@ -862,25 +1390,54 @@
         const bundles = safeInt(inputs.bundles.value);
         const packs = safeInt(inputs.packs.value);
 
-        // stack = 5,000 notes, bundle = 500, pack = 100
         const totalNotes = stacks * NOTES_PER_STACK + bundles * NOTES_PER_BUNDLE + packs * NOTES_PER_PACK;
         const value = totalNotes * denom;
-        grandTotal += value;
-        totalNotesSum += totalNotes;
+        bulkTotal += value;
+        bulkNotesSum += totalNotes;
 
         const notesBadge = document.getElementById(`notes-badge-${idx}`);
         if (notesBadge) notesBadge.textContent = totalNotes.toLocaleString('en-NG');
 
         const valueBadge = document.getElementById(`value-badge-${idx}`);
         if (valueBadge) valueBadge.textContent = formatNaira(value);
+
+        const tillInput = getTillInput(idx);
+        let tillCount = 0;
+        if (tillInput) {
+          tillCount = safeInt(tillInput.value);
+          if (tillCount > TILL_MAX) {
+            tillCount = TILL_MAX;
+            tillInput.value = TILL_MAX;
+          }
+          const tillValue = tillCount * denom;
+          tillTotal += tillValue;
+          tillNotesSum += tillCount;
+        }
+
+        breakdown[denom] = { stacks, bundles, packs, till: tillCount };
       });
 
-      const formattedTotal = formatNaira(grandTotal);
-      if (runningTotalEl) runningTotalEl.textContent = formattedTotal;
-      if (bottomTotalEl) bottomTotalEl.textContent = formattedTotal;
-      if (runningNotesSummary) {
-        runningNotesSummary.textContent = totalNotesSum.toLocaleString('en-NG') + ' notes';
-      }
+      const grandTotal = bulkTotal + tillTotal;
+
+      if (runningTotalEl) runningTotalEl.textContent = formatNaira(grandTotal);
+      if (bottomTotalEl) bottomTotalEl.textContent = formatNaira(grandTotal);
+
+      if (bulkLine) bulkLine.textContent = bulkNotesSum.toLocaleString('en-NG') + ' notes · ' + formatNaira(bulkTotal);
+      if (tillLine) tillLine.textContent = tillNotesSum.toLocaleString('en-NG') + ' notes · ' + formatNaira(tillTotal);
+      if (grandLine) grandLine.textContent = (bulkNotesSum + tillNotesSum).toLocaleString('en-NG') + ' notes · ' + formatNaira(grandTotal);
+
+      if (tillTotalValue) tillTotalValue.textContent = formatNaira(tillTotal);
+      if (bulkTotalValue) bulkTotalValue.textContent = formatNaira(bulkTotal);
+
+      forwardState.bulkTotal = bulkTotal;
+      forwardState.tillTotal = tillTotal;
+      forwardState.grandTotal = grandTotal;
+      forwardState.bulkNotes = bulkNotesSum;
+      forwardState.tillNotes = tillNotesSum;
+      forwardState.grandNotes = bulkNotesSum + tillNotesSum;
+      forwardState.breakdown = breakdown;
+
+      updateTodaySummary();
     }
 
     function resetForward() {
@@ -889,33 +1446,44 @@
         if (inputs.stacks) inputs.stacks.value = '0';
         if (inputs.bundles) inputs.bundles.value = '0';
         if (inputs.packs) inputs.packs.value = '0';
+        const tillInput = getTillInput(idx);
+        if (tillInput) tillInput.value = '0';
       });
       updateForward();
     }
 
     // ==================================================
-    // REVERSE MODE — per-denomination amount inputs
+    // REVERSE MODE
     // ==================================================
     function buildReverseCards() {
       reverseDenomList.innerHTML = '';
 
       denominations.forEach((denom, idx) => {
         const card = document.createElement('div');
-        card.className = 'reverse-denom-card';
-        card.id = `reverse-card-${idx}`;
+        card.className = 'denom-card';
 
         const header = document.createElement('div');
-        header.className = 'reverse-denom-header';
+        header.className = 'denom-header';
 
         const label = document.createElement('div');
-        label.className = 'reverse-denom-label';
+        label.className = 'denom-label';
         label.innerHTML = `₦${denom.toLocaleString('en-NG')} <small>note</small>`;
 
         const inputWrap = document.createElement('div');
-        inputWrap.className = 'reverse-amount-input-wrap';
+        inputWrap.style.display = 'flex';
+        inputWrap.style.alignItems = 'center';
+        inputWrap.style.gap = '4px';
+        inputWrap.style.background = '#fff';
+        inputWrap.style.border = '1.5px solid #d0ddee';
+        inputWrap.style.borderRadius = '10px';
+        inputWrap.style.padding = '2px 10px';
+        inputWrap.style.flex = '1';
+        inputWrap.style.maxWidth = '160px';
 
         const currency = document.createElement('span');
-        currency.className = 'currency';
+        currency.style.fontSize = '0.9rem';
+        currency.style.fontWeight = '800';
+        currency.style.color = 'var(--orange-deep)';
         currency.textContent = '₦';
 
         const inp = document.createElement('input');
@@ -926,6 +1494,17 @@
         inp.setAttribute('aria-label', `Amount of ${denom} naira notes`);
         inp.dataset.reverseRow = idx;
         inp.id = `reverse-input-${idx}`;
+        inp.style.flex = '1';
+        inp.style.border = 'none';
+        inp.style.background = 'transparent';
+        inp.style.fontFamily = 'inherit';
+        inp.style.fontSize = '0.95rem';
+        inp.style.fontWeight = '700';
+        inp.style.color = 'var(--navy)';
+        inp.style.padding = '8px 0';
+        inp.style.outline = 'none';
+        inp.style.minWidth = '0';
+        inp.style.textAlign = 'right';
 
         inputWrap.appendChild(currency);
         inputWrap.appendChild(inp);
@@ -937,13 +1516,18 @@
         const breakdown = document.createElement('div');
         breakdown.className = 'reverse-breakdown hidden';
         breakdown.id = `reverse-breakdown-${idx}`;
+        breakdown.style.display = 'flex';
+        breakdown.style.flexWrap = 'wrap';
+        breakdown.style.gap = '6px';
+        breakdown.style.paddingTop = '10px';
+        breakdown.style.borderTop = '1px dashed #e4edf8';
+        breakdown.style.marginTop = '10px';
         card.appendChild(breakdown);
 
         reverseDenomList.appendChild(card);
       });
     }
 
-    // Compute breakdown with STACK = 5,000 notes
     function computeBreakdownForAmount(amount, denom) {
       const noteCount = Math.floor(amount / denom);
       if (noteCount <= 0) return null;
@@ -958,11 +1542,7 @@
       const loose = notes;
 
       return {
-        denom,
-        stacks,
-        bundles,
-        packs,
-        loose,
+        denom, stacks, bundles, packs, loose,
         totalNotes: noteCount,
         subtotal: noteCount * denom
       };
@@ -982,20 +1562,25 @@
 
       if (amount % denom !== 0) {
         const closest = Math.floor(amount / denom) * denom;
-        container.innerHTML = `<span class="bd-note">⚠️ ₦${amount.toLocaleString('en-NG')} is not a multiple of ₦${denom.toLocaleString('en-NG')}. Closest is ₦${closest.toLocaleString('en-NG')}.</span>`;
+        container.innerHTML = `<span style="font-size:0.7rem;color:#6a829b;font-style:italic;">⚠️ ₦${amount.toLocaleString('en-NG')} is not a multiple of ₦${denom.toLocaleString('en-NG')}. Closest is ₦${closest.toLocaleString('en-NG')}.</span>`;
         return;
       }
 
       if (!breakdown) {
-        container.innerHTML = `<span class="bd-note">Amount too small</span>`;
+        container.innerHTML = `<span style="font-size:0.7rem;color:#6a829b;font-style:italic;">Amount too small</span>`;
         return;
       }
 
+      const pillStyle = 'background:#f0f6ff;border-radius:40px;padding:4px 10px;font-size:0.7rem;font-weight:700;color:#142b44;display:flex;align-items:center;gap:4px;white-space:nowrap;';
+      const numStyle = 'color:#c95f0a;font-size:0.85rem;';
+      const unitStyle = 'font-size:0.6rem;text-transform:uppercase;color:#6a829b;font-weight:600;';
+      const zeroStyle = 'opacity:0.35;';
+
       const pills = [];
-      pills.push(`<span class="bd-pill ${breakdown.stacks > 0 ? '' : 'zero'}"><span class="num">${breakdown.stacks.toLocaleString('en-NG')}</span><span class="unit">stack${breakdown.stacks !== 1 ? 's' : ''}</span></span>`);
-      pills.push(`<span class="bd-pill ${breakdown.bundles > 0 ? '' : 'zero'}"><span class="num">${breakdown.bundles.toLocaleString('en-NG')}</span><span class="unit">bundle${breakdown.bundles !== 1 ? 's' : ''}</span></span>`);
-      pills.push(`<span class="bd-pill ${breakdown.packs > 0 ? '' : 'zero'}"><span class="num">${breakdown.packs.toLocaleString('en-NG')}</span><span class="unit">pack${breakdown.packs !== 1 ? 's' : ''}</span></span>`);
-      pills.push(`<span class="bd-pill ${breakdown.loose > 0 ? '' : 'zero'}"><span class="num">${breakdown.loose.toLocaleString('en-NG')}</span><span class="unit">loose</span></span>`);
+      pills.push(`<span style="${pillStyle}${breakdown.stacks > 0 ? '' : zeroStyle}"><span style="${numStyle}">${breakdown.stacks.toLocaleString('en-NG')}</span><span style="${unitStyle}">stack${breakdown.stacks !== 1 ? 's' : ''}</span></span>`);
+      pills.push(`<span style="${pillStyle}${breakdown.bundles > 0 ? '' : zeroStyle}"><span style="${numStyle}">${breakdown.bundles.toLocaleString('en-NG')}</span><span style="${unitStyle}">bundle${breakdown.bundles !== 1 ? 's' : ''}</span></span>`);
+      pills.push(`<span style="${pillStyle}${breakdown.packs > 0 ? '' : zeroStyle}"><span style="${numStyle}">${breakdown.packs.toLocaleString('en-NG')}</span><span style="${unitStyle}">pack${breakdown.packs !== 1 ? 's' : ''}</span></span>`);
+      pills.push(`<span style="${pillStyle}${breakdown.loose > 0 ? '' : zeroStyle}"><span style="${numStyle}">${breakdown.loose.toLocaleString('en-NG')}</span><span style="${unitStyle}">loose</span></span>`);
 
       container.innerHTML = pills.join('');
     }
@@ -1006,16 +1591,10 @@
 
       denominations.forEach((denom, idx) => {
         const inp = document.getElementById(`reverse-input-${idx}`);
-        const card = document.getElementById(`reverse-card-${idx}`);
         if (!inp) return;
 
         const raw = inp.value.replace(/[^\d]/g, '');
         const amount = raw ? Number(raw) : 0;
-
-        if (card) {
-          if (amount > 0) card.classList.add('has-value');
-          else card.classList.remove('has-value');
-        }
 
         if (amount > 0) {
           grandTotal += amount;
@@ -1048,6 +1627,158 @@
     }
 
     // ==================================================
+    // DAILY LOG
+    // ==================================================
+    function updateTodaySummary() {
+      if (todayDateEl) todayDateEl.textContent = formatDisplayDate(todayKey());
+      if (todayBulkEl) todayBulkEl.textContent = formatNaira(forwardState.bulkTotal);
+      if (todayTillEl) todayTillEl.textContent = formatNaira(forwardState.tillTotal);
+      if (todayTotalEl) todayTotalEl.textContent = formatNaira(forwardState.grandTotal);
+    }
+
+    function renderSavedEntries() {
+      const log = loadLog();
+      if (!savedEntriesList) return;
+
+      if (!log.entries || log.entries.length === 0) {
+        savedEntriesList.innerHTML = `
+          <div class="empty-log">
+            <span class="icon">📭</span>
+            No saved entries yet
+          </div>`;
+        return;
+      }
+
+      const sorted = [...log.entries].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+      const shown = sorted.slice(0, MAX_DISPLAY_ENTRIES);
+
+      savedEntriesList.innerHTML = shown.map((entry) => `
+        <div class="saved-entry">
+          <span class="saved-entry-date">${formatDisplayDate(entry.date)}</span>
+          <span class="saved-entry-value">${formatNaira(entry.grandTotal || 0)}</span>
+          <button class="saved-entry-del" data-delete-date="${entry.date}" aria-label="Delete entry">×</button>
+        </div>
+      `).join('');
+
+      savedEntriesList.querySelectorAll('[data-delete-date]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const date = btn.dataset.deleteDate;
+          if (!confirm(`Delete entry for ${formatDisplayDate(date)}?`)) return;
+          const current = loadLog();
+          current.entries = current.entries.filter((e) => e.date !== date);
+          saveLog(current);
+          renderSavedEntries();
+          showToast('Entry deleted', 'success');
+        });
+      });
+    }
+
+    function saveToday() {
+      const dateKey = todayKey();
+
+      if (forwardState.grandTotal <= 0) {
+        showToast('Nothing to save — count is empty', 'error');
+        return;
+      }
+
+      const current = loadLog();
+      const exists = current.entries.find((e) => e.date === dateKey);
+
+      if (exists) {
+        if (!confirm(`An entry for ${formatDisplayDate(dateKey)} already exists. Overwrite?`)) {
+          return;
+        }
+        current.entries = current.entries.filter((e) => e.date !== dateKey);
+      }
+
+      const entry = {
+        date: dateKey,
+        timestamp: Date.now(),
+        bulkTotal: forwardState.bulkTotal,
+        tillTotal: forwardState.tillTotal,
+        grandTotal: forwardState.grandTotal,
+        bulkNotes: forwardState.bulkNotes,
+        tillNotes: forwardState.tillNotes,
+        grandNotes: forwardState.grandNotes,
+        breakdown: forwardState.breakdown
+      };
+
+      current.entries.push(entry);
+
+      if (saveLog(current)) {
+        renderSavedEntries();
+        showToast('Saved ✓', 'success');
+      } else {
+        showToast('Save failed — storage may be full', 'error');
+      }
+    }
+
+    function exportCsv() {
+      const log = loadLog();
+      if (!log.entries || log.entries.length === 0) {
+        showToast('No entries to export', 'error');
+        return;
+      }
+
+      const sorted = [...log.entries].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+
+      const headers = ['Date', 'Bulk Value', 'Till Value', 'Total Value', 'Bulk Notes', 'Till Notes', 'Total Notes'];
+      const rows = sorted.map((e) => [
+        e.date,
+        (e.bulkTotal || 0).toFixed(2),
+        (e.tillTotal || 0).toFixed(2),
+        (e.grandTotal || 0).toFixed(2),
+        e.bulkNotes || 0,
+        e.tillNotes || 0,
+        e.grandNotes || 0
+      ]);
+
+      const csvContent = [headers, ...rows]
+        .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+        .join('\n');
+
+      downloadFile('vault-calculator-log.csv', csvContent, 'text/csv');
+      showToast('CSV downloaded ✓', 'success');
+    }
+
+    function exportJson() {
+      const log = loadLog();
+      if (!log.entries || log.entries.length === 0) {
+        showToast('No entries to export', 'error');
+        return;
+      }
+      const content = JSON.stringify(log, null, 2);
+      downloadFile('vault-calculator-log.json', content, 'application/json');
+      showToast('JSON downloaded ✓', 'success');
+    }
+
+    function downloadFile(filename, content, mimeType) {
+      const blob = new Blob([content], { type: mimeType + ';charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    function clearAllLog() {
+      const log = loadLog();
+      if (!log.entries || log.entries.length === 0) {
+        showToast('Nothing to clear', 'error');
+        return;
+      }
+      if (!confirm(`Delete all ${log.entries.length} saved entr${log.entries.length === 1 ? 'y' : 'ies'}? This cannot be undone.`)) {
+        return;
+      }
+      saveLog({ entries: [] });
+      renderSavedEntries();
+      showToast('All entries cleared', 'success');
+    }
+
+    // ==================================================
     // EVENT LISTENERS
     // ==================================================
     function attachListeners() {
@@ -1064,6 +1795,16 @@
           }
           updateForward();
         }
+
+        if (e.target.matches('input[data-till-row]')) {
+          let num = Math.floor(Number(e.target.value));
+          if (isNaN(num) || num < 0) num = 0;
+          if (num > TILL_MAX) num = TILL_MAX;
+          if (e.target.value !== '') {
+            e.target.value = num;
+          }
+          updateForward();
+        }
       });
 
       document.addEventListener('blur', (e) => {
@@ -1075,6 +1816,14 @@
             const num = Math.floor(Number(val));
             e.target.value = (isNaN(num) || num < 0) ? 0 : num;
           }
+          updateForward();
+        }
+
+        if (e.target.matches('input[data-till-row]')) {
+          let num = Math.floor(Number(e.target.value));
+          if (isNaN(num) || num < 0) num = 0;
+          if (num > TILL_MAX) num = TILL_MAX;
+          e.target.value = num;
           updateForward();
         }
       }, true);
@@ -1090,9 +1839,7 @@
           e.target.value = formatted;
           const newLen = formatted.length;
           const newPos = cursorPos + (newLen - prevLen);
-          try {
-            e.target.setSelectionRange(newPos, newPos);
-          } catch (err) {}
+          try { e.target.setSelectionRange(newPos, newPos); } catch (err) {}
           computeReverse();
         }
       });
@@ -1105,6 +1852,11 @@
           }
         }
       });
+
+      if (saveTodayBtn) saveTodayBtn.addEventListener('click', saveToday);
+      if (exportCsvBtn) exportCsvBtn.addEventListener('click', exportCsv);
+      if (exportJsonBtn) exportJsonBtn.addEventListener('click', exportJson);
+      if (clearAllBtn) clearAllBtn.addEventListener('click', clearAllLog);
     }
 
     // ==================================================
@@ -1112,11 +1864,29 @@
     // ==================================================
     function init() {
       buildCards();
+      buildTillGrid();
       buildReverseCards();
       attachListeners();
+
+      // check if a new day has started
+      const isNewDay = checkDailyReset();
+
+      // always reset on load (fresh start each session)
+      // but only SHOW the "new day" banner if a day has actually changed
       resetForward();
       resetReverse();
+
+      if (isNewDay) {
+        resetBanner.classList.add('show');
+        // auto-hide the banner after 6 seconds
+        setTimeout(() => {
+          resetBanner.classList.remove('show');
+        }, 6000);
+      }
+
       setMode('forward');
+      renderSavedEntries();
+      updateTodaySummary();
     }
 
     init();
