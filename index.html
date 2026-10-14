@@ -28,6 +28,8 @@
       --green-soft: #e6f5ed;
       --red: #c53030;
       --red-soft: #fde8e8;
+      --blue: #2b5f9c;
+      --blue-soft: #e8f0fa;
     }
 
     html { font-size: 16px; -webkit-text-size-adjust: 100%; }
@@ -680,6 +682,14 @@
 
     .log-btn.secondary:hover { background: #e4eefb; }
 
+    .log-btn.load {
+      background: var(--blue-soft);
+      color: var(--blue);
+      border: 1px solid #c4d9ee;
+    }
+
+    .log-btn.load:hover { background: #d5e5f5; }
+
     .log-btn.danger {
       background: var(--red-soft);
       color: var(--red);
@@ -688,6 +698,14 @@
 
     .log-btn.danger:hover { background: #fbd5d5; }
 
+    .log-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      filter: grayscale(0.5);
+    }
+
+    .log-btn:disabled:hover { transform: none; }
+
     .log-btn-row {
       display: flex;
       gap: 8px;
@@ -695,6 +713,13 @@
     }
 
     .log-btn-row .log-btn { flex: 1; min-width: 90px; }
+
+    .log-btn-pair {
+      display: flex;
+      gap: 8px;
+    }
+
+    .log-btn-pair .log-btn { flex: 1; }
 
     .saved-entries-title {
       font-size: 0.68rem;
@@ -798,6 +823,7 @@
 
     .toast.success { background: var(--green); }
     .toast.error { background: var(--red); }
+    .toast.info { background: var(--blue); }
 
     /* version tag */
     .version-tag {
@@ -1105,7 +1131,6 @@
       text-transform: uppercase;
     }
 
-    /* ============ PRINT STYLESHEET ============ */
     @media print {
       body * { visibility: hidden; }
 
@@ -1381,9 +1406,14 @@
     </div>
 
     <div class="log-actions">
-      <button class="log-btn primary" id="saveTodayBtn">
-        <span>💾</span> Save today's count
-      </button>
+      <div class="log-btn-pair">
+        <button class="log-btn primary" id="saveTodayBtn">
+          <span>💾</span> Save
+        </button>
+        <button class="log-btn load" id="loadTodayBtn">
+          <span>📥</span> Load today
+        </button>
+      </div>
       <div class="log-btn-row">
         <button class="log-btn secondary" id="exportCsvBtn">
           <span>📄</span> CSV
@@ -1407,7 +1437,7 @@
   </div>
 
   <div class="version-tag">
-    <div class="version-num">Version 1.4</div>
+    <div class="version-num">Version 1.5</div>
     <div class="version-label">Vault Calculator</div>
   </div>
 
@@ -1481,6 +1511,7 @@
     const todayTillEl = document.getElementById('todayTill');
     const todayTotalEl = document.getElementById('todayTotal');
     const saveTodayBtn = document.getElementById('saveTodayBtn');
+    const loadTodayBtn = document.getElementById('loadTodayBtn');
     const exportCsvBtn = document.getElementById('exportCsvBtn');
     const viewTableBtn = document.getElementById('viewTableBtn');
     const clearAllBtn = document.getElementById('clearAllBtn');
@@ -1779,6 +1810,7 @@
       forwardState.breakdown = breakdown;
 
       updateTodaySummary();
+      updateLoadButtonState();
     }
 
     function resetForward() {
@@ -1977,6 +2009,19 @@
       if (todayTotalEl) todayTotalEl.textContent = formatNaira(forwardState.grandTotal);
     }
 
+    function getTodayEntry() {
+      const log = loadLog();
+      const key = todayKey();
+      return (log.entries || []).find((e) => e.date === key) || null;
+    }
+
+    function updateLoadButtonState() {
+      if (!loadTodayBtn) return;
+      const exists = !!getTodayEntry();
+      loadTodayBtn.disabled = !exists;
+      loadTodayBtn.title = exists ? "Load today's saved entry" : "No entry saved for today";
+    }
+
     function renderSavedEntries() {
       const log = loadLog();
       if (!savedEntriesList) return;
@@ -1987,6 +2032,7 @@
             <span class="icon">📭</span>
             No saved entries yet
           </div>`;
+        updateLoadButtonState();
         return;
       }
 
@@ -2012,6 +2058,8 @@
           showToast('Entry deleted', 'success');
         });
       });
+
+      updateLoadButtonState();
     }
 
     function saveToday() {
@@ -2052,6 +2100,41 @@
       } else {
         showToast('Save failed — storage may be full', 'error');
       }
+    }
+
+    function loadToday() {
+      const entry = getTodayEntry();
+      if (!entry) {
+        showToast('No saved entry for today', 'error');
+        return;
+      }
+
+      // if the calculator already has data, confirm overwrite
+      if (forwardState.grandTotal > 0) {
+        if (!confirm("Replace the current values with today's saved entry?")) {
+          return;
+        }
+      }
+
+      // restore bulk + till values from the saved breakdown
+      const bd = entry.breakdown || {};
+      denominations.forEach((denom, idx) => {
+        const inputs = getRowInputs(idx);
+        const row = bd[denom] || {};
+        if (inputs.stacks) inputs.stacks.value = String(row.stacks || 0);
+        if (inputs.bundles) inputs.bundles.value = String(row.bundles || 0);
+        if (inputs.packs) inputs.packs.value = String(row.packs || 0);
+
+        const tillInput = getTillInput(idx);
+        if (tillInput) {
+          let t = row.till || 0;
+          if (t > TILL_MAX) t = TILL_MAX;
+          tillInput.value = String(t);
+        }
+      });
+
+      updateForward();
+      showToast(`Loaded ${formatDisplayDate(entry.date)} ✓`, 'success');
     }
 
     function exportCsv() {
@@ -2307,6 +2390,7 @@
       });
 
       if (saveTodayBtn) saveTodayBtn.addEventListener('click', saveToday);
+      if (loadTodayBtn) loadTodayBtn.addEventListener('click', loadToday);
       if (exportCsvBtn) exportCsvBtn.addEventListener('click', exportCsv);
       if (clearAllBtn) clearAllBtn.addEventListener('click', clearAllLog);
       if (viewTableBtn) viewTableBtn.addEventListener('click', openTableOverlay);
@@ -2350,6 +2434,7 @@
       setMode('forward');
       renderSavedEntries();
       updateTodaySummary();
+      updateLoadButtonState();
     }
 
     init();
