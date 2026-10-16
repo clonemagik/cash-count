@@ -325,60 +325,66 @@
       background: #fffcf9;
     }
 
-    .till-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-      gap: 6px;
+    /* ---- SINGLE TILL INPUT ---- */
+    .till-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fffaf5;
+      border: 2px solid #ffd0a4;
+      border-radius: 16px;
+      padding: 6px 16px;
+      transition: 0.15s;
       margin-bottom: 10px;
     }
 
-    .till-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: #fffaf5;
-      border-radius: 12px;
-      padding: 6px 4px 5px;
-      border: 1px solid #ffe2c7;
+    .till-input-wrap:focus-within {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(245, 130, 32, 0.15);
+      background: #fffcf9;
     }
 
-    .till-item label {
-      font-size: 0.62rem;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
+    .till-input-wrap .currency {
+      font-size: 1.5rem;
+      font-weight: 800;
       color: var(--orange-deep);
-      font-weight: 700;
-      margin-bottom: 3px;
+      flex-shrink: 0;
     }
 
-    .till-item input {
-      width: 100%;
-      padding: 8px 2px;
-      border: 1.5px solid #ffd0a4;
-      border-radius: 9px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      text-align: center;
-      color: var(--navy);
-      background: white;
+    .till-input-wrap input {
+      flex: 1;
+      border: none;
+      background: transparent;
       font-family: inherit;
-      transition: 0.15s;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--navy);
+      padding: 10px 0;
+      outline: none;
+      min-width: 0;
+      text-align: right;
       -moz-appearance: textfield;
       appearance: textfield;
-      min-width: 0;
     }
 
-    .till-item input::-webkit-outer-spin-button,
-    .till-item input::-webkit-inner-spin-button {
+    .till-input-wrap input::-webkit-outer-spin-button,
+    .till-input-wrap input::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0;
     }
 
-    .till-item input:focus {
-      outline: none;
-      border-color: var(--orange);
-      box-shadow: 0 0 0 3px rgba(245, 130, 32, 0.18);
-      background: #fffcf9;
+    .till-input-wrap input::placeholder {
+      color: #b0c2d4;
+      font-weight: 600;
+    }
+
+    .till-hint {
+      font-size: 0.68rem;
+      color: #8a6a4a;
+      text-align: center;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      margin-bottom: 4px;
     }
 
     .section-footer {
@@ -938,7 +944,6 @@
 
     .toolbar-btn.primary:hover { background: var(--orange-deep); }
 
-    /* printable area */
     .printable {
       padding: 24px 20px 20px;
       background: white;
@@ -1131,6 +1136,33 @@
       text-transform: uppercase;
     }
 
+    /* till summary block in print view */
+    .printable-till-total {
+      margin-top: 10px;
+      padding: 14px 16px;
+      background: #fff4e9;
+      border: 1px solid #ffd0a4;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .printable-till-total .label {
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.72rem;
+      color: #8a6a4a;
+      font-weight: 700;
+    }
+
+    .printable-till-total .value {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--orange-deep);
+    }
+
     @media print {
       body * { visibility: hidden; }
 
@@ -1179,6 +1211,12 @@
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
+
+      .printable-till-total {
+        background: #fff4e9 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
     }
 
     @media (min-width: 600px) {
@@ -1222,7 +1260,8 @@
     }
 
     @supports (-webkit-touch-callout: none) {
-      .unit-item input, .till-item input { font-size: 16px; }
+      .unit-item input { font-size: 16px; }
+      .till-input-wrap input { font-size: 1.5rem; }
     }
 
     @supports (padding: max(0px)) {
@@ -1284,11 +1323,15 @@
           <span class="icon">🪙</span>
           <div>
             TILL
-            <small>loose notes · max 99 each</small>
+            <small>loose cash total</small>
           </div>
         </div>
       </div>
-      <div class="till-grid" id="tillGrid"></div>
+      <div class="till-input-wrap">
+        <span class="currency">₦</span>
+        <input type="text" id="tillTotalInput" inputmode="numeric" placeholder="0" autocomplete="off" aria-label="Total till amount">
+      </div>
+      <div class="till-hint">Enter the total loose cash amount in the till</div>
       <div class="section-footer till">
         <span class="section-footer-label">Till total</span>
         <span class="section-footer-value" id="tillTotalValue">₦0.00</span>
@@ -1305,7 +1348,7 @@
         </div>
         <div class="total-line">
           <span class="line-label">Till</span>
-          <span class="line-value" id="tillLine">0 notes · ₦0.00</span>
+          <span class="line-value" id="tillLine">₦0.00</span>
         </div>
         <div class="total-line grand">
           <span class="line-label">Grand</span>
@@ -1437,7 +1480,7 @@
   </div>
 
   <div class="version-tag">
-    <div class="version-num">Version 1.5</div>
+    <div class="version-num">Version 1.6</div>
     <div class="version-label">Vault Calculator</div>
   </div>
 
@@ -1473,7 +1516,6 @@
     const NOTES_PER_PACK = 100;
     const NOTES_PER_BUNDLE = 500;
     const NOTES_PER_STACK = 5000;
-    const TILL_MAX = 99;
     const STORAGE_KEY = 'vaultCalculator.log.v1';
     const LAST_OPEN_KEY = 'vaultCalculator.lastOpenDate';
     const MAX_DISPLAY_ENTRIES = 7;
@@ -1488,7 +1530,7 @@
     const tillLine = document.getElementById('tillLine');
     const grandLine = document.getElementById('grandLine');
 
-    const tillGrid = document.getElementById('tillGrid');
+    const tillTotalInput = document.getElementById('tillTotalInput');
     const tillTotalValue = document.getElementById('tillTotalValue');
     const bulkTotalValue = document.getElementById('bulkTotalValue');
 
@@ -1540,6 +1582,11 @@
       const digits = str.replace(/[^\d]/g, '');
       if (!digits) return '';
       return Number(digits).toLocaleString('en-NG');
+    };
+
+    const parseFormattedNumber = (str) => {
+      const digits = String(str || '').replace(/[^\d]/g, '');
+      return digits ? Number(digits) : 0;
     };
 
     const todayKey = () => {
@@ -1700,31 +1747,6 @@
       });
     }
 
-    function buildTillGrid() {
-      tillGrid.innerHTML = '';
-      denominations.forEach((denom, idx) => {
-        const item = document.createElement('div');
-        item.className = 'till-item';
-
-        const lbl = document.createElement('label');
-        lbl.textContent = `₦${denom.toLocaleString('en-NG')}`;
-
-        const inp = document.createElement('input');
-        inp.type = 'number';
-        inp.min = '0';
-        inp.max = TILL_MAX;
-        inp.step = '1';
-        inp.value = '0';
-        inp.inputMode = 'numeric';
-        inp.setAttribute('aria-label', `Till notes of ${denom} naira`);
-        inp.dataset.tillRow = idx;
-
-        item.appendChild(lbl);
-        item.appendChild(inp);
-        tillGrid.appendChild(item);
-      });
-    }
-
     function getRowInputs(rowIndex) {
       return {
         stacks: document.querySelector(`input[data-row="${rowIndex}"][data-unit="stacks"]`),
@@ -1733,16 +1755,11 @@
       };
     }
 
-    function getTillInput(rowIndex) {
-      return document.querySelector(`input[data-till-row="${rowIndex}"]`);
-    }
-
     const forwardState = {
       bulkTotal: 0,
       tillTotal: 0,
       grandTotal: 0,
       bulkNotes: 0,
-      tillNotes: 0,
       grandNotes: 0,
       breakdown: {}
     };
@@ -1750,8 +1767,6 @@
     function updateForward() {
       let bulkTotal = 0;
       let bulkNotesSum = 0;
-      let tillTotal = 0;
-      let tillNotesSum = 0;
       const breakdown = {};
 
       denominations.forEach((denom, idx) => {
@@ -1773,30 +1788,19 @@
         const valueBadge = document.getElementById(`value-badge-${idx}`);
         if (valueBadge) valueBadge.textContent = formatNaira(value);
 
-        const tillInput = getTillInput(idx);
-        let tillCount = 0;
-        if (tillInput) {
-          tillCount = safeInt(tillInput.value);
-          if (tillCount > TILL_MAX) {
-            tillCount = TILL_MAX;
-            tillInput.value = TILL_MAX;
-          }
-          const tillValue = tillCount * denom;
-          tillTotal += tillValue;
-          tillNotesSum += tillCount;
-        }
-
-        breakdown[denom] = { stacks, bundles, packs, till: tillCount };
+        breakdown[denom] = { stacks, bundles, packs };
       });
 
+      // till — single total amount
+      const tillTotal = parseFormattedNumber(tillTotalInput ? tillTotalInput.value : '');
       const grandTotal = bulkTotal + tillTotal;
 
       if (runningTotalEl) runningTotalEl.textContent = formatNaira(grandTotal);
       if (bottomTotalEl) bottomTotalEl.textContent = formatNaira(grandTotal);
 
       if (bulkLine) bulkLine.textContent = bulkNotesSum.toLocaleString('en-NG') + ' notes · ' + formatNaira(bulkTotal);
-      if (tillLine) tillLine.textContent = tillNotesSum.toLocaleString('en-NG') + ' notes · ' + formatNaira(tillTotal);
-      if (grandLine) grandLine.textContent = (bulkNotesSum + tillNotesSum).toLocaleString('en-NG') + ' notes · ' + formatNaira(grandTotal);
+      if (tillLine) tillLine.textContent = formatNaira(tillTotal);
+      if (grandLine) grandLine.textContent = bulkNotesSum.toLocaleString('en-NG') + ' notes · ' + formatNaira(grandTotal);
 
       if (tillTotalValue) tillTotalValue.textContent = formatNaira(tillTotal);
       if (bulkTotalValue) bulkTotalValue.textContent = formatNaira(bulkTotal);
@@ -1805,8 +1809,7 @@
       forwardState.tillTotal = tillTotal;
       forwardState.grandTotal = grandTotal;
       forwardState.bulkNotes = bulkNotesSum;
-      forwardState.tillNotes = tillNotesSum;
-      forwardState.grandNotes = bulkNotesSum + tillNotesSum;
+      forwardState.grandNotes = bulkNotesSum;
       forwardState.breakdown = breakdown;
 
       updateTodaySummary();
@@ -1819,9 +1822,8 @@
         if (inputs.stacks) inputs.stacks.value = '0';
         if (inputs.bundles) inputs.bundles.value = '0';
         if (inputs.packs) inputs.packs.value = '0';
-        const tillInput = getTillInput(idx);
-        if (tillInput) tillInput.value = '0';
       });
+      if (tillTotalInput) tillTotalInput.value = '';
       updateForward();
     }
 
@@ -2087,7 +2089,6 @@
         tillTotal: forwardState.tillTotal,
         grandTotal: forwardState.grandTotal,
         bulkNotes: forwardState.bulkNotes,
-        tillNotes: forwardState.tillNotes,
         grandNotes: forwardState.grandNotes,
         breakdown: forwardState.breakdown
       };
@@ -2109,14 +2110,12 @@
         return;
       }
 
-      // if the calculator already has data, confirm overwrite
       if (forwardState.grandTotal > 0) {
         if (!confirm("Replace the current values with today's saved entry?")) {
           return;
         }
       }
 
-      // restore bulk + till values from the saved breakdown
       const bd = entry.breakdown || {};
       denominations.forEach((denom, idx) => {
         const inputs = getRowInputs(idx);
@@ -2124,14 +2123,11 @@
         if (inputs.stacks) inputs.stacks.value = String(row.stacks || 0);
         if (inputs.bundles) inputs.bundles.value = String(row.bundles || 0);
         if (inputs.packs) inputs.packs.value = String(row.packs || 0);
-
-        const tillInput = getTillInput(idx);
-        if (tillInput) {
-          let t = row.till || 0;
-          if (t > TILL_MAX) t = TILL_MAX;
-          tillInput.value = String(t);
-        }
       });
+
+      if (tillTotalInput) {
+        tillTotalInput.value = entry.tillTotal > 0 ? Number(entry.tillTotal).toLocaleString('en-NG') : '';
+      }
 
       updateForward();
       showToast(`Loaded ${formatDisplayDate(entry.date)} ✓`, 'success');
@@ -2146,15 +2142,14 @@
 
       const sorted = [...log.entries].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
 
-      const headers = ['Date', 'Bulk Value', 'Till Value', 'Total Value', 'Bulk Notes', 'Till Notes', 'Total Notes'];
+      const headers = ['Date', 'Bulk Value', 'Till Value', 'Total Value', 'Bulk Notes', 'Total Notes'];
       const rows = sorted.map((e) => [
         e.date,
         (e.bulkTotal || 0).toFixed(2),
         (e.tillTotal || 0).toFixed(2),
         (e.grandTotal || 0).toFixed(2),
         e.bulkNotes || 0,
-        e.tillNotes || 0,
-        e.grandNotes || 0
+        e.grandNotes || e.bulkNotes || 0
       ]);
 
       const csvContent = [headers, ...rows]
@@ -2201,7 +2196,7 @@
 
       let bulkRows = '';
       denominations.forEach((denom) => {
-        const row = bd[denom] || { stacks: 0, bundles: 0, packs: 0, till: 0 };
+        const row = bd[denom] || { stacks: 0, bundles: 0, packs: 0 };
         const totalNotes = row.stacks * NOTES_PER_STACK + row.bundles * NOTES_PER_BUNDLE + row.packs * NOTES_PER_PACK;
         const value = totalNotes * denom;
         const isZero = totalNotes === 0;
@@ -2212,20 +2207,6 @@
             <td>${row.bundles.toLocaleString('en-NG')}</td>
             <td>${row.packs.toLocaleString('en-NG')}</td>
             <td class="notes-col">${totalNotes.toLocaleString('en-NG')}</td>
-            <td class="value-col">${formatNaira(value)}</td>
-          </tr>`;
-      });
-
-      let tillRows = '';
-      denominations.forEach((denom) => {
-        const row = bd[denom] || { till: 0 };
-        const count = row.till || 0;
-        const value = count * denom;
-        const isZero = count === 0;
-        tillRows += `
-          <tr class="${isZero ? 'zero-row' : ''}">
-            <td>₦${denom.toLocaleString('en-NG')}</td>
-            <td class="notes-col">${count.toLocaleString('en-NG')}</td>
             <td class="value-col">${formatNaira(value)}</td>
           </tr>`;
       });
@@ -2258,20 +2239,10 @@
         </div>
 
         <div class="printable-section">
-          <h2>🪙 Till (Loose Notes)</h2>
-          <table class="printable-table">
-            <thead>
-              <tr>
-                <th>Note</th>
-                <th>Notes</th>
-                <th>Value</th>
-              </tr>
-            </thead>
-            <tbody>${tillRows}</tbody>
-          </table>
-          <div class="printable-subtotal">
-            <span class="subtotal-label">Till subtotal</span>
-            <span class="subtotal-value">${forwardState.tillNotes.toLocaleString('en-NG')} notes · ${formatNaira(forwardState.tillTotal)}</span>
+          <h2>🪙 Till (Loose Cash)</h2>
+          <div class="printable-till-total">
+            <span class="label">Total till amount</span>
+            <span class="value">${formatNaira(forwardState.tillTotal)}</span>
           </div>
         </div>
 
@@ -2279,7 +2250,7 @@
           <div class="grand-label">Grand Total</div>
           <div class="grand-row">
             <span class="grand-value">${formatNaira(forwardState.grandTotal)}</span>
-            <span class="grand-notes">${forwardState.grandNotes.toLocaleString('en-NG')} notes</span>
+            <span class="grand-notes">${forwardState.grandNotes.toLocaleString('en-NG')} notes (bulk)</span>
           </div>
           <div class="grand-breakdown">
             <div class="breakdown-line">
@@ -2332,13 +2303,14 @@
           updateForward();
         }
 
-        if (e.target.matches('input[data-till-row]')) {
-          let num = Math.floor(Number(e.target.value));
-          if (isNaN(num) || num < 0) num = 0;
-          if (num > TILL_MAX) num = TILL_MAX;
-          if (e.target.value !== '') {
-            e.target.value = num;
-          }
+        if (e.target === tillTotalInput) {
+          const formatted = formatNumberInput(e.target.value);
+          const cursorPos = e.target.selectionStart;
+          const prevLen = e.target.value.length;
+          e.target.value = formatted;
+          const newLen = formatted.length;
+          const newPos = cursorPos + (newLen - prevLen);
+          try { e.target.setSelectionRange(newPos, newPos); } catch (err) {}
           updateForward();
         }
       });
@@ -2354,15 +2326,23 @@
           }
           updateForward();
         }
-
-        if (e.target.matches('input[data-till-row]')) {
-          let num = Math.floor(Number(e.target.value));
-          if (isNaN(num) || num < 0) num = 0;
-          if (num > TILL_MAX) num = TILL_MAX;
-          e.target.value = num;
-          updateForward();
-        }
       }, true);
+
+      // keypress — numeric only for till input
+      document.addEventListener('keypress', (e) => {
+        if (e.target === tillTotalInput) {
+          const char = String.fromCharCode(e.which);
+          if (!/[\d]/.test(char) && !e.ctrlKey && !e.metaKey) {
+            e.preventDefault();
+          }
+        }
+        if (e.target.matches('input[data-reverse-row]')) {
+          const char = String.fromCharCode(e.which);
+          if (!/[\d]/.test(char) && !e.ctrlKey && !e.metaKey) {
+            e.preventDefault();
+          }
+        }
+      });
 
       if (resetBtn) resetBtn.addEventListener('click', resetForward);
       if (resetReverseBtn) resetReverseBtn.addEventListener('click', resetReverse);
@@ -2377,15 +2357,6 @@
           const newPos = cursorPos + (newLen - prevLen);
           try { e.target.setSelectionRange(newPos, newPos); } catch (err) {}
           computeReverse();
-        }
-      });
-
-      document.addEventListener('keypress', (e) => {
-        if (e.target.matches('input[data-reverse-row]')) {
-          const char = String.fromCharCode(e.which);
-          if (!/[\d]/.test(char) && !e.ctrlKey && !e.metaKey) {
-            e.preventDefault();
-          }
         }
       });
 
@@ -2415,7 +2386,6 @@
     // ==================================================
     function init() {
       buildCards();
-      buildTillGrid();
       buildReverseCards();
       attachListeners();
 
